@@ -1,0 +1,35 @@
+{
+  "name": "service",
+  "version": "1.0.0",
+  "description": "Think components service",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Think",
+    "Components"
+  ],
+  "author": "yuebin",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-clean": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-jsdoc3": "^2.0.0",
+    "gulp-nodemon": "^2.4.2",
+    "gulp-uglify": "^3.0.1",
+    "gulp-watch": "^5.0.1",
+    "gulp-webserver": "^0.9.1",
+    "node-dev": "^3.1.3"
+  },
+  "dependencies": {
+    "connect": "^3.6.6",
+    "pg": "^7.8.0"
+  }
+}

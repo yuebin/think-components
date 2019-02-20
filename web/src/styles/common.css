@@ -1,0 +1,8 @@
+html,body {height: 100%;}
+.root-container,.app-container{height: 100%;}
+.avater{padding:26px 16px;}
+.avdter-img{text-align: center;border-radius: 50%;cursor: pointer;}
+.avdter-img img{width:100px;height: auto;text-align: center;border-radius: 50%;}
+.client-manager-container{padding:16px;}
+.rcl{text-align: center;}
+

@@ -1,0 +1,58 @@
+{
+    "boot":{
+        "port":3000
+    },
+    "logger":{
+        "format":""
+    },
+    "domain":{
+        "business":{
+            "dbConfig": {
+                "dialect": "PG",
+                "user": "postgres",
+                "host":"127.0.0.1",
+                "database": "tcs_business_db",
+                "password": "postgres",
+                "port": 5432
+            },
+            "name":"business",
+            "remark":"业务库"
+        },
+        "adm":{
+            "dbConfig": {
+                "dialect": "PG",
+                "user": "postgres",
+                "host": "127.0.0.1",
+                "database": "tcs_adm_db",
+                "password": "postgres",
+                "port": 5432
+            },
+            "name": "admin",
+            "remark": "管理域配置库"
+        },
+        "dev":{
+            "dbConfig": {
+                "dialect": "PG",
+                "user": "postgres",
+                "host": "127.0.0.1",
+                "database": "tcs_dev_db",
+                "password": "postgres",
+                "port": 5432
+            },
+            "name": "dev",
+            "remark": "开发域配合库"
+        },
+        "app":{
+            "dbConfig": {
+                "dialect": "PG",
+                "user": "postgres",
+                "host": "127.0.0.1",
+                "database": "tcs_app_db",
+                "password": "postgres",
+                "port": 5432
+            },
+            "name": "app",
+            "remark": "APP域配置库"
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "opts": {
+        "destination": "./docs/out"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ],
+    "templates": {
+        "systemName": "Think Components Service",
+        "copyright": "yuebin.github.io",
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "default": {
+            "outputSourceFiles": true
+        },
+        "path": "ink-docstrap",
+        "theme": "cerulean",
+        "navType": "vertical",
+        "linenums": true,
+        "dateFormat": "YYYY-MM-DD hh:mm:ss"
+    }
+}
