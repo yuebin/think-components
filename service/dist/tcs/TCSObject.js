@@ -17,6 +17,12 @@ function () {
   function TCSObject() {
     _classCallCheck(this, TCSObject);
   }
+  /**
+   * 
+   * @param {初始化数据集合} initObj 
+   * @param  {...any} props 
+   */
+
 
   _createClass(TCSObject, [{
     key: "defaultProps",
@@ -30,7 +36,29 @@ function () {
       }
 
       props.forEach(function (item) {
-        item && (_this[item] = initObj[item]);
+        item && initObj && (_this[item] = initObj[item]);
+      });
+    }
+    /**
+     * 
+     * @param {数据库格式初始化数据集合} dbInitObj
+     * @param  {...any} props 
+     */
+
+  }, {
+    key: "dbFiledProps",
+    value: function dbFiledProps() {
+      var _this2 = this;
+
+      var dbInitObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      for (var _len2 = arguments.length, props = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        props[_key2 - 1] = arguments[_key2];
+      }
+
+      props.forEach(function (item) {
+        var lineKey = item.toUnderline();
+        item && dbInitObj && (_this2[item] = dbInitObj[lineKey]);
       });
     }
   }]);

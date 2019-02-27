@@ -15,7 +15,7 @@ class AppConfig {
             version:"1.0.0",
             debugger: true,
             dev:{//开发环境配置
-                gateway:"http://127.0.0.1:9090"
+                gateway:"http://127.0.0.1:3000"
             },
             pro:{//生产环境配置
                 gateway:"生产地址网关"
@@ -25,7 +25,6 @@ class AppConfig {
                 contentType: "application/json; charset=utf-8", //"application/x-www-form-urlencoded", //Http请求 Content-type配置   application/x-www-form-urlencoded;charset=UTF-8
                 AccessControlAllowOrigin : "*"//headers: { 'Access-Control-Allow-Origin': '*' }
             }
-
         }
 
         //配置类，其属性不容许在代码中修改，如果需要修改，需要修改源码

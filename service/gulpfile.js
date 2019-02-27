@@ -5,7 +5,8 @@ var clean = require("gulp-clean");
 var nodemon = require("gulp-nodemon");
 var jsdoc = require("gulp-jsdoc3");
 var webserver = require("gulp-webserver");
-var jsdocConfig = require('./jsdoc.json')
+var jsdocConfig = require('./jsdoc.json');
+var ts = require("gulp-typescript");
 
 
 var docRoot = jsdocConfig.opts.destination;
@@ -35,6 +36,7 @@ gulp.task("compile", async function () {
 
     gulp.src(["src/**.js", "src/**/**.js"])
         .pipe(babel())
+        //.pipe(ts({ noImplicitAny: true,target:"es2015" }))
         //.pipe(uglify())
         .pipe(gulp.dest('dist'));
 

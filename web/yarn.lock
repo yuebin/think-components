@@ -6614,6 +6614,11 @@ vue-hot-reload-api@^2.3.0:
   version "2.3.0"
   resolved "http://r.cnpmjs.org/vue-hot-reload-api/download/vue-hot-reload-api-2.3.0.tgz#97976142405d13d8efae154749e88c4e358cf926"
 
+vue-i18n@^8.8.2:
+  version "8.8.2"
+  resolved "http://r.cnpmjs.org/vue-i18n/download/vue-i18n-8.8.2.tgz#57baa73dc8f215d68e4b8f2743724657cbb77591"
+  integrity sha1-V7qnPcjyFdaOS48nQ3JGV8u3dZE=
+
 vue-loader@^15.3.0:
   version "15.3.0"
   resolved "http://r.cnpmjs.org/vue-loader/download/vue-loader-15.3.0.tgz#b474d10a4e93d934a78c147fc3e314b370e9fc54"

@@ -37,14 +37,12 @@ function (_TCSObject) {
 
     _classCallCheck(this, DB);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(DB).call(this));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(DB).call(this, null));
 
     _this.defaultProps(configJson, 'name', 'host', 'dialect', 'user', 'database', 'password', 'port');
 
-    console.log(_assertThisInitialized(_this));
-
     try {
-      _this.pool = new _pg.Pool(_assertThisInitialized(_this)); //console.log(this.pool);
+      _this.pool = new _pg.Pool(_assertThisInitialized(_this));
     } catch (error) {
       console.error(error);
     }
@@ -57,18 +55,21 @@ function (_TCSObject) {
     value: function query(querySQL) {
       var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-      // this.pool.connect(client=>{
-      //     params = params || (params=[]);
-      //     console.log(querySQL)
-      //     return client.query(querySQL,params).then(res=>{
-      //         client.release();
-      //         callback && callback(res);
-      //     }).catch(err=>{
-      //         client.release();
-      //         console.error(err.stack);
-      //     });
-      // });
+
+      if (!params instanceof Array) {
+        params = new Array().push(params);
+      }
+
       this.pool.query(querySQL, params).then(function (res) {
+        callback && callback.call(null, res);
+      }).catch(function (err) {
+        console.error(err.stack);
+      });
+    }
+  }, {
+    key: "saveTable",
+    value: function saveTable(table, callback) {
+      this.pool.query(table.getSQL(), table.getParams()).then(function (res) {
         callback && callback(res);
       }).catch(function (err) {
         console.error(err.stack);

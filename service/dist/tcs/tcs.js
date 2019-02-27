@@ -1,8 +1,17 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TCS = void 0;
+
 var _Logger = require("../utils/Logger");
 
 var _DBFactory = require("./db/DBFactory");
+
+var _router = require("./route/router");
+
+var _ProviderFactory = require("./providers/ProviderFactory");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -13,7 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 /**
  * Think Commponents Service
  */
-module.exports =
+var TCS =
 /*#__PURE__*/
 function () {
   function TCS(configPath) {
@@ -70,8 +79,7 @@ function () {
   }, {
     key: "initDB",
     value: function initDB() {
-      _Logger.Logger.log(this.config.domain);
-
+      //Logger.log(this.config.domain);
       var domainConfig = this.config.domain;
 
       for (var domain in domainConfig) {
@@ -87,8 +95,14 @@ function () {
   }, {
     key: "buildRouters",
     value: function buildRouters() {
+      var _this = this;
+
       _DBFactory.DBFactory.query("select * from tconfig.t_routers", [], function (res) {
-        console.log(res);
+        _this.router = new _router.Router(res);
+      });
+
+      _DBFactory.DBFactory.query("select * from tconfig.t_providers", [], function (res) {
+        _ProviderFactory.ProviderFactory.initProvider(res);
       });
     }
     /**
@@ -105,6 +119,11 @@ function () {
   }, {
     key: "startJob",
     value: function startJob() {}
+  }, {
+    key: "dispatch",
+    value: function dispatch(req, res) {
+      this.router.dispatch(req, res);
+    }
     /**
      * 启动服务器
      */
@@ -112,9 +131,22 @@ function () {
   }, {
     key: "start",
     value: function start() {
-      var service = require("connect")(); //service.use(this.routers);
+      var _this2 = this;
 
+      var service = require("connect")();
 
+      var bodyParser = require("body-parser");
+
+      service.use(bodyParser.urlencoded({
+        extended: false
+      }));
+      service.use(function (req, res) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "content-type");
+        res.setHeader("Access-Control-Allow-Methods", "DELETE,PUT,POST,GET,OPTIONS");
+
+        _this2.dispatch(req, res);
+      });
       service.listen(this.config.boot.port);
 
       _Logger.Logger.log("TCS Started，port:" + this.config.boot.port);
@@ -123,3 +155,5 @@ function () {
 
   return TCS;
 }();
+
+exports.TCS = TCS;

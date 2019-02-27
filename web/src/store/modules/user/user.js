@@ -1,4 +1,4 @@
-import Vue from "vue";
+import HttpUtil from "../../../httpUtil/HttpUtil";
 // import USER_STORE from "./user_store_mutation_type"
 
 const state = {
@@ -19,7 +19,7 @@ const getters = {
 const actions = {
     login(context, userInfo) {
         // /admin/login
-        Vue.prototype.$http.postAppData("Login",{}, userInfo).then(function (response) {
+        HttpUtil.getHttpUtil().postAppData("Login",{}, userInfo).then(function (response) {
             context.commit('login', response.data);
         }).catch(function (error) {
             console.error(error);

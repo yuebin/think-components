@@ -1,6 +1,6 @@
 import axios from "axios";
 import AppConfig from '../config/AppConfig';
-import ActionConfig  from '../config/ActionConfig';
+import ApiConfig  from '../config/ApiConfig';
 
 /**
  * 
@@ -11,7 +11,7 @@ class HttpUtil {
         if (HttpUtil.instantiation){
             throw new Error("This class has been instantiated and can be retrieved using the 'HttpUtil.getHttpUtil()' method.");
         }
-        this.actionConfig = ActionConfig.getActionConfig();
+        this.ApiConfig = new ApiConfig();
         /** 初始化网络请求 **/
         var appConfig = AppConfig.getAppConfig();
         var httpConfig = appConfig.getConfigData("httpConfig");
@@ -26,13 +26,13 @@ class HttpUtil {
 
     /**
      * 批量获取请求，等待所有请求都返回是触发
-     * @param {请求参数数组} queryInfoArray  [{method,actionCode,queryParams,submitData},{...},...]
+     * @param {请求参数数组} queryInfoArray  [{method,apiCode,queryParams,submitData},{...},...]
      */
     getAppBatchData(queryInfoArray){
         let queryPromiseArr = [];
         if (queryInfoArray && queryInfoArray instanceof Array){
             queryInfoArray.array.forEach(item => {
-                queryPromiseArr.push(this.getAppData(item.method,item.actionCode,item.queryParams,item.submitData));
+                queryPromiseArr.push(this.getAppData(item.method, item.apiCode,item.queryParams,item.submitData));
             });
         }
         return this.$http.all(queryPromiseArr);
@@ -43,45 +43,42 @@ class HttpUtil {
      * 获取网络数据
      * @param {域名或者微服务名，默认为appConfig} domain 
      * @param {请求方法 GET,POST,DEL,PUT} method
-     * @param {ActionConfig中配置的Code} actionCode 
+     * @param {apiCode中配置的Code} apiCode
      * @param {URL请求URL参数} queryParams
      * @param {POST请求是携带的参数} submitData 
      */
-    getData(domain,method,actionCode,queryParams,submitData){
-        let actionInfo = null;
+    getData(domain="app",method,apiCode,queryParams=null,submitData=null){
+        let apiInfo = null;
         let promise = null;
-        switch (domain) {
-            case "APP"://目前只有APP域
-                //获取Action信息
-                actionInfo = this.actionConfig.getAppActionInfo(method, actionCode);
-                //加工构建Action信息
-                actionInfo = this.restfulProcess(actionInfo, queryParams);
-                //构建网络请求并且返回Promise对象
-                promise = this.buildHttpQuery(method, actionInfo,queryParams,submitData);//
-                break;
-        }
+        //获取Api信息
+        apiInfo = this.ApiConfig.getApiInfo(domain.toLowerCase(), method, apiCode);
+        //加工构建Api信息
+        apiInfo = this.restfulProcess(apiInfo, queryParams);
+        //构建网络请求并且返回Promise对象
+        promise = this.buildHttpQuery(method, apiInfo,queryParams,submitData);//
+                
         return promise;
     }
 
     /**
      * 构建HTTP请求，并且返回一个Promise对象
      * @param {HTTP请求方式} method 
-     * @param {Action信息} actionInfo 
+     * @param {Api信息} apiInfo 
      * @param {请求参数} queryParams 
      * @param {提交数据} submitData 
      */
-    buildHttpQuery(method,actionInfo,queryParams,submitData){
+    buildHttpQuery(method, apiInfo,queryParams,submitData){
         method = method.toUpperCase();
         let promise = null;
         switch (method) {
             case "POST":
                 //构建POST请求
-                var queryParamsStr = this.queryStringify(actionInfo, queryParams);
-                promise = this.$http.post(actionInfo.url + queryParamsStr, submitData);
+                var queryParamsStr = this.queryStringify(apiInfo, queryParams);
+                promise = this.$http.post(apiInfo.url + queryParamsStr, submitData);
                 break;
             case "GET":
                 //构建GET请求
-                promise = this.$http.get(actionInfo.url, {
+                promise = this.$http.get(apiInfo.url, {
                     params: queryParams,
                     data: submitData
                 });
@@ -94,7 +91,7 @@ class HttpUtil {
                 break;
             default:
                 //默认为GET请求
-                promise = this.$http.get(actionInfo.url, {
+                promise = this.$http.get(apiInfo.url, {
                     params: queryParams,
                     data: submitData
                 });
@@ -105,13 +102,13 @@ class HttpUtil {
 
     /** 
      * RESTFulurl结构处理
-     * @param {actionConfig 配置信息} actionInfo 
+     * @param {ApiConfig 配置信息} ApiConfig
      */
     //"/user/{userid}/kkk/list/{abcde}/ddd".match(/\{\w+\}/g)
-    restfulProcess(actionInfo,queryParams){
-        let result = actionInfo;
-        if (actionInfo && actionInfo.hasOwnProperty("url")){
-            let tempUrl = actionInfo.url;
+    restfulProcess(apiInfo,queryParams){
+        let result = apiInfo;
+        if (apiInfo && apiInfo.hasOwnProperty("url")){
+            let tempUrl = apiInfo.url;
             let params = tempUrl.match(/\{\w+\}/g);
             if (params){
                 params.forEach(item => {
@@ -121,36 +118,15 @@ class HttpUtil {
                     }
                 });
             }
-            actionInfo.url = tempUrl;
+            apiInfo.url = tempUrl;
         }
         return result;
     }
 
-
-    /**
-     * GET方式获取App域的网络数据
-     * @param {ActionConfig中对应APP域中配置的ActionCode} actionCode 
-     * @param {url请求参数} queryParams 
-     * @param {HTTP提交参数} submitData 
-     */
-    getAppData(actionCode, queryParams, submitData) {
-        return this.getData("APP", "GET", actionCode, queryParams, submitData);
-    }
-
-    /**
-     * POST方式获取App域的网络数据
-     * @param {ActionConfig中对应APP域中配置的ActionCode} actionCode 
-     * @param {url请求参数} queryParams 
-     * @param {HTTP提交参数} submitData 
-     */
-    postAppData(actionCode, queryParams, submitData) {
-        return this.getData("APP", "POST", actionCode, queryParams, submitData);
-    }
-
-    queryStringify(actionInfo, queryParams) {
+    queryStringify(apiInfo, queryParams) {
         var queryParamsStr = "";
         if (queryParams) {
-            if (actionInfo && actionInfo.url.indexOf("?") > -1) {
+            if (apiInfo && apiInfo.url.indexOf("?") > -1) {
                 queryParamsStr = "&"
             } else {
                 queryParamsStr = "?"
@@ -160,6 +136,67 @@ class HttpUtil {
             }
         }
         return queryParamsStr
+    }
+
+    /**
+     * GET方式获取App域的网络数据
+     * @param {ApiConfig中对应APP域中配置的ApiCode} apiCode
+     * @param {url请求参数} queryParams 
+     * @param {HTTP提交参数} submitData 
+     */
+    getAppData(apiCode, queryParams=null, submitData=null) {
+        return this.getData("APP", "GET", apiCode, queryParams, submitData);
+    }
+
+    /**
+     * POST方式获取App域的网络数据
+     * @param {ApiConfig中对应APP域中配置的ApiCode} apiCode
+     * @param {url请求参数} queryParams 
+     * @param {HTTP提交参数} submitData 
+     */
+    postAppData(apiCode, queryParams=null, submitData=null) {
+        return this.getData("APP", "POST", apiCode, queryParams, submitData);
+    }
+
+
+    /**
+     * GET方式获取App域的网络数据
+     * @param {ApiConfig中对应APP域中配置的ApiCode} apiCode
+     * @param {url请求参数} queryParams 
+     * @param {HTTP提交参数} submitData 
+     */
+    getDevData(apiCode, queryParams = null, submitData = null) {
+        return this.getData("DEV", "GET", apiCode, queryParams, submitData);
+    }
+
+    /**
+     * POST方式获取App域的网络数据
+     * @param {ApiConfig中对应APP域中配置的ApiCode} apiCode
+     * @param {url请求参数} queryParams 
+     * @param {HTTP提交参数} submitData 
+     */
+    postDevData(apiCode, queryParams = null, submitData = null) {
+        return this.getData("DEV", "POST", apiCode, queryParams, submitData);
+    }
+
+    /**
+     * GET方式获取App域的网络数据
+     * @param {ApiConfig中对应APP域中配置的ApiCode} apiCode
+     * @param {url请求参数} queryParams 
+     * @param {HTTP提交参数} submitData 
+     */
+    getAdmData(apiCode, queryParams = null, submitData = null) {
+        return this.getData("ADM", "GET", apiCode, queryParams, submitData);
+    }
+
+    /**
+     * POST方式获取App域的网络数据
+     * @param {ApiConfig中对应APP域中配置的ApiCode} apiCode
+     * @param {url请求参数} queryParams 
+     * @param {HTTP提交参数} submitData 
+     */
+    postAdmData(apiCode, queryParams = null, submitData = null) {
+        return this.getData("ADM", "POST", apiCode, queryParams, submitData);
     }
     
 

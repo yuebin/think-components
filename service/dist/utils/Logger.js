@@ -20,10 +20,9 @@ function () {
 
   _createClass(Logger, null, [{
     key: "error",
-    value: function error(str) {
-      if (NODE_ENV === "development") {
-        console.error(str);
-      }
+    value: function error(str) {// if(NODE_ENV ==="development"){
+      //     console.error(str)
+      // }
     }
   }, {
     key: "log",

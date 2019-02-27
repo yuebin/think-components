@@ -149,7 +149,7 @@
                 this.$refs.side1.toggleCollapse();
             },
             selectMenu(parentMenu,currMenuItem){
-                var path = parentMenu.path + currMenuItem.path;
+                var path = "/app"+parentMenu.path + currMenuItem.path;
                 this.currentActiveName = currMenuItem.code;
                 //this.$router.push(path);
                 this.$navPush(path);

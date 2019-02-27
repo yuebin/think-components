@@ -31,8 +31,6 @@ function () {
   }, {
     key: "addDBConfig",
     value: function addDBConfig(dbName, configJson) {
-      _Logger.Logger.log("init db:" + dbName);
-
       var db = new _DB.DB(configJson);
       db.name = dbName;
       DBFactory.dbCache.set(dbName, db);
@@ -42,7 +40,7 @@ function () {
     value: function query(querySQL) {
       var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-      this.getDB().query(querySQL, params, callback);
+      DBFactory.getDB(null).query(querySQL, params, callback);
     }
   }]);
 

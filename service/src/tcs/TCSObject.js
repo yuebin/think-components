@@ -1,13 +1,29 @@
-class TCSObject {
-
-    constructor(){    
+export class TCSObject {
+    
+    constructor() {
     }
 
-    defaultProps(initObj={},...props){
+    /**
+     * 
+     * @param {初始化数据集合} initObj 
+     * @param  {...any} props 
+     */
+    defaultProps(initObj = {}, ...props) {
         props.forEach((item)=>{
-            item && (this[item] = initObj[item]);
+            item && initObj &&  (this[item] = initObj[item]);
         });
     }
-}
 
-export { TCSObject }
+    /**
+     * 
+     * @param {数据库格式初始化数据集合} dbInitObj
+     * @param  {...any} props 
+     */
+    dbFiledProps(dbInitObj = {}, ...props){
+        props.forEach((item) => {
+            let lineKey = item.toUnderline();
+            item && dbInitObj && (this[item] = dbInitObj[lineKey]);
+        });
+    }
+
+}
