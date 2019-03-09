@@ -1,11 +1,10 @@
 import HttpUtil from "../../../httpUtil/HttpUtil";
-import { Tree }  from "../../../tc/modules/Tree";
+import { Tree } from "../../../tc/modules/Tree";
 
-const DOMAIN="dev";
+const DOMAIN = "config";
 // initial state
 const state = {
-    packages: [],
-    packageTree: null
+    domain:[]
 }
 
 // getters
@@ -14,7 +13,7 @@ const getters = {}
 // actions
 const actions = {
     getPackages({ commit }) {
-        HttpUtil.getHttpUtil().getDevData("packages", { domain: DOMAIN}).then((res)=>{
+        HttpUtil.getHttpUtil().getDevData("packages", { domain: DOMAIN }).then((res) => {
             commit("buildPackages", res.data.data)
         });
     }
@@ -25,13 +24,13 @@ const mutations = {
     setPackages(state, packages) {
         state.packages = packages;
     },
-    buildPackages(state,packages) {
-        if (packages){
+    buildPackages(state, packages) {
+        if (packages) {
             //dbuildTree(packages[0], packages);
             let index = 0;
-            for(let i=0;i<packages.length;i++){
-                if (!packages[i].parent_id){
-                    index = i;break;
+            for (let i = 0; i < packages.length; i++) {
+                if (!packages[i].parent_id) {
+                    index = i; break;
                 }
             }
             state.packages = packages;
@@ -45,17 +44,17 @@ const mutations = {
     }
 }
 
-const getTree = function(list,index) {
+const getTree = function (list, index) {
     let tree = new Tree();
     let item = list[index];
     let packageId = item.package_id
     tree.setId(packageId);
     tree.setName(item.name);
 
-    for(let i=0;i<list.length;i++){
+    for (let i = 0; i < list.length; i++) {
         let parentId = list[i].parent_id;
-        if (packageId === parentId){
-            tree.add(getTree(list,i));
+        if (packageId === parentId) {
+            tree.add(getTree(list, i));
         }
     }
     return tree;

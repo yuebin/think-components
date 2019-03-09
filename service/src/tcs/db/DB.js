@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 class DB extends TCSObject {
 
     constructor(configJson) {
-        super(null);
+        super();
         this.defaultProps(configJson, 'name', 'host', 'dialect', 'user', 'database', 'password', 'port');
         try {
             this.pool = new Pool(this);

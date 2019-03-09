@@ -72,6 +72,9 @@
     <div class="layout">
         <Layout>
             <Sider on-collapse="onCollapse()" ref="side1" hide-trigger collapsible :collapsed-width="94" v-model="isCollapsed">
+                <Select v-model="model1" style="width:200px">
+                        <Option v-for="item in domainList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
                <Menu  active-name="currentActiveName"  theme="dark" width="auto" :open-name="['a']" >
                     <Submenu :name="mainMenu.code" :title="mainMenu.name" v-for="mainMenu in mainEenus">
                         <template slot="title">
@@ -90,8 +93,8 @@
             <Layout>
                 <Header :style="{padding: 0}" class="layout-header-bar">
                     <Icon @click.native="collapsedSider" :class="rotateIcon" :style="{margin: '20px 20px 0'}" type="navicon-round" size="24"></Icon>
-                    ==={{this.packages}}===
                 </Header>
+                
                 <Content :style="{margin: '20px', background: '#fff', minHeight: '260px'}">
                     <router-view></router-view>
                 </Content>
@@ -136,6 +139,7 @@
             },
             ...mapState({
                 packages:state=>state.dev.packages,
+                domainList:state=>state.config.domain
             })
         },
         methods: {

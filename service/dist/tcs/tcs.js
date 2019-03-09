@@ -13,6 +13,10 @@ var _router = require("./route/router");
 
 var _ProviderFactory = require("./providers/ProviderFactory");
 
+var _Context = _interopRequireDefault(require("./common/Context"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -71,7 +75,9 @@ function () {
 
   }, {
     key: "checkConfig",
-    value: function checkConfig() {}
+    value: function checkConfig() {
+      this.context = new _Context.default(this.config);
+    }
     /**
      * 初始化数据库
      */
@@ -79,14 +85,13 @@ function () {
   }, {
     key: "initDB",
     value: function initDB() {
-      //Logger.log(this.config.domain);
-      var domainConfig = this.config.domain;
+      _Logger.Logger.log(this.config); //1,初始化业务库
 
-      for (var domain in domainConfig) {
-        if (domain && domainConfig[domain]["dbConfig"]) {
-          _DBFactory.DBFactory.addDBConfig(domain, domainConfig[domain]["dbConfig"]);
-        }
-      }
+
+      _DBFactory.DBFactory.getDBFactory().addAppDB(this.config.dbConfig["appDB"]); //2,初始化配置库
+
+
+      _DBFactory.DBFactory.getDBFactory().addConfigDB(this.config.dbConfig["configDB"]);
     }
     /**
      * 初始化路由
@@ -97,11 +102,11 @@ function () {
     value: function buildRouters() {
       var _this = this;
 
-      _DBFactory.DBFactory.query("select * from tconfig.t_routers", [], function (res) {
+      _DBFactory.DBFactory.getDBFactory().queryConfig("select * from t_routers", [], function (res) {
         _this.router = new _router.Router(res);
       });
 
-      _DBFactory.DBFactory.query("select * from tconfig.t_providers", [], function (res) {
+      _DBFactory.DBFactory.getDBFactory().queryConfig("select * from t_providers", [], function (res) {
         _ProviderFactory.ProviderFactory.initProvider(res);
       });
     }
@@ -144,6 +149,7 @@ function () {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Headers", "content-type");
         res.setHeader("Access-Control-Allow-Methods", "DELETE,PUT,POST,GET,OPTIONS");
+        req.context = _this2.context;
 
         _this2.dispatch(req, res);
       });

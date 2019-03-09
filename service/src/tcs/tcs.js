@@ -2,6 +2,7 @@ import { Logger } from "../utils/Logger";
 import { DBFactory } from "./db/DBFactory";
 import { Router } from "./route/router";
 import { ProviderFactory } from "./providers/ProviderFactory";
+import Context  from "./common/Context";
 /**
  * Think Commponents Service
  */
@@ -21,6 +22,7 @@ class TCS {
             throw new Error("TCS must be created with the new keyword!");
         }
     }
+
     /**
      * 私有内部启动方法<br>
      * bootstrap TCS启动函数
@@ -44,27 +46,26 @@ class TCS {
      * 检查必要的配置项
      */
     checkConfig() {
+        this.context = new Context(this.config);
     }
     /**
      * 初始化数据库
      */
     initDB() {
-        //Logger.log(this.config.domain);
-        let domainConfig = this.config.domain;
-        for (let domain in domainConfig) {
-            if (domain && domainConfig[domain]["dbConfig"]) {
-                DBFactory.addDBConfig(domain, domainConfig[domain]["dbConfig"]);
-            }
-        }
+        Logger.log(this.config);
+        //1,初始化业务库
+        DBFactory.getDBFactory().addAppDB(this.config.dbConfig["appDB"]);
+        //2,初始化配置库
+        DBFactory.getDBFactory().addConfigDB(this.config.dbConfig["configDB"]);
     }
     /**
      * 初始化路由
      */
     buildRouters() {
-        DBFactory.query("select * from tconfig.t_routers", [], (res) => {
+        DBFactory.getDBFactory().queryConfig("select * from t_routers", [], (res) => {
             this.router = new Router(res);
         });
-        DBFactory.query("select * from tconfig.t_providers",[],(res)=>{
+        DBFactory.getDBFactory().queryConfig("select * from t_providers",[],(res)=>{
             ProviderFactory.initProvider(res);
         });
     }
@@ -96,6 +97,7 @@ class TCS {
             res.setHeader("Access-Control-Allow-Origin","*");
             res.setHeader("Access-Control-Allow-Headers","content-type");
             res.setHeader("Access-Control-Allow-Methods","DELETE,PUT,POST,GET,OPTIONS");
+            req.context = this.context;
             this.dispatch(req,res);
         });
         service.listen(this.config.boot.port);

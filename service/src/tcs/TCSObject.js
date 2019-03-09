@@ -13,7 +13,7 @@ export class TCSObject {
             item && initObj &&  (this[item] = initObj[item]);
         });
     }
-
+    
     /**
      * 
      * @param {数据库格式初始化数据集合} dbInitObj

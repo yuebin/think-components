@@ -14,7 +14,7 @@ class Provider{
      * @param {*} callback 毁掉函数
      */
     executeSQLExpl(sql, params, callback){
-        DBFactory.getDB(null).query(sql, params, callback);
+        DBFactory.getDBFactory().queryConfig(sql, params, callback);
     }
 
     /**

@@ -37,7 +37,7 @@ function (_TCSObject) {
 
     _classCallCheck(this, DB);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(DB).call(this, null));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(DB).call(this));
 
     _this.defaultProps(configJson, 'name', 'host', 'dialect', 'user', 'database', 'password', 'port');
 
